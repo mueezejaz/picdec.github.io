@@ -1,0 +1,98 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f7f7f7;
+}
+
+h3 {
+  color: #333;
+}
+
+#webcam {
+  width: 80%;
+  max-width: 640px;
+  margin-bottom: 20px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+}
+
+#enableCam,
+#train,
+#reset,
+#creat_butten {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.dataCollector {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+#creat_butten {
+  background-color: #4caf50;
+  color: white;
+}
+
+#enableCam,
+#train,
+#reset {
+  background-color: #3498db;
+  color: white;
+}
+
+#enableCam:hover,
+#train:hover,
+#reset:hover,
+#creat butten:hover {
+  background-color: #2980b9;
+}
+
+#buttonContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#btnText {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+
+.dataCollector {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dataCollector:hover {
+  background-color: #2980b9;
+}
+
+.removed {
+  display: none;
+}
