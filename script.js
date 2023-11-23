@@ -224,6 +224,7 @@ function dataGatherLoop() {
  * Once data collected actually perform the transfer learning.
  **/
 async function trainAndPredict() {
+  STATUS.innerText = `training.....`
   predict = false;
   tf.util.shuffleCombo(trainingDataInputs, trainingDataOutputs);
 
@@ -263,6 +264,7 @@ async function trainAndPredict() {
  * Log training progress.
  **/
 function logProgress(epoch, logs) {
+  STATUS.innerText = `training..... success rate:${logs.acc * 100}%.`
   console.log('Data for epoch ' + epoch, logs);
 }
 
