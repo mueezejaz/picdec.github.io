@@ -1,44 +1,62 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>replit</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ball Ninja Javascript Game</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs" type="text/javascript"></script>
 </head>
+<body id="body">
+    <!-- Game Heading -->
+    <div class="gameHeading">
+        <p id="heading"></p>
+    </div>
+    <video id="webcam" autoplay></video>
 
-<body>
+    <!-- Main Canvas -->
+    <canvas id="canvas"></canvas>
 
-  <h3 id="status">tf.js is loading</h3>
-  <video id="webcam" autoplay></video>
-  <div class="trancon">
+    <!-- Front Body -->
+    <div class="startGame" id="startGame">
+        <div class="home">
+            <h1>Ball Ninja Javascript <br> </h1>
+            <button id="startGameBtn">Play <i class="fa-solid fa-gamepad"></i></button>
+            <p>Your High Score: <span id="homeHighScore"></span></p>
+        </div>
+       
+        <!-- Bottom Source Code Link -->
+        
+    </div>
 
-    <button id="enableCam">enablecam</button>
-    <button id="train">train</button>
-    <button id="reset">reset</button>
-  </div>
-  <label for="btnText">write object name to detect</label>
-  <input type="text" id="btnText" placeholder="Enter object name">
-  <button id="creat_butten">Create Button</button>
+    <!-- Alert Count Down Timer  -->
+    <div class="countDown" id="countDownContainer">
+        <h1></h1>
+    </div>
 
+    <!-- In Game Body -->
+    <div id="inGameContainer">
+        <div class="scoreDiv">
+            <p>Score: <span id="score"></span></p>
+            <p>High Score: <span id="highScore"></span></p>
+        </div>
+        <div class="gameCountTime">
+            <h1 id="gameMinuteAndSecond">00 : 00</h1>
+        </div>
+        <div id="strikeCountDiv">
+            <h1 class="strikeCount">1x</h1>
+        </div>
+    </div>
 
-  <div id="buttonContainer"></div>
+    <div id="gameEndDiv">
+        <div class="gameEndContainer">
+            <p>Your Score: <span id="endGameScore"></span></p>
+            <button id="returnHome">Return Home <i class="fa-solid fa-right-to-bracket"></i></button>
+        </div>
+    </div>
 
-
-
-
-  <!--
-  This script places a badge on your repl's full-browser view back to your repl's cover
-  page. Try various colors for the theme: dark, light, red, orange, yellow, lime, green,
-  teal, blue, blurple, magenta, pink!
-  -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js" type="text/javascript"></script>
-
-  <!-- Import the page's JavaScript to do some stuff -->
-  <script type="module" src="./script.js"></script>
-
-
+    <script src="./script.js"></script>
 </body>
-
 </html>
