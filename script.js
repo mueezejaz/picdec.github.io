@@ -6,7 +6,7 @@ const rendring_model = document.getElementById('body')
 const VIDEO = document.getElementById('webcam');
 let model = false;
 let Lwrist;
-let dots = [];
+
 let left_wristX;
 let Rwrist;
 let predition;
