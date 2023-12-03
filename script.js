@@ -6,7 +6,7 @@ const rendring_model = document.getElementById('body')
 const VIDEO = document.getElementById('webcam');
 let model = false;
 let Lwrist;
-
+let dots = [];
 let left_wristX;
 let Rwrist;
 let predition;
@@ -14,11 +14,11 @@ let left_wristY;
 class Position {
   prevMouseX = 0;
   prevMouseY = 0;
-  mouseX =0;
-  mouseY =0;
+  mouseX = 0;
+  mouseY = 0;
   linesArray = [];
 
-  constructor(px, py,Lwrist) {
+  constructor(px, py, Lwrist) {
     this.prevMouseX = Lwrist?.mouseX;
     this.prevMouseY = Lwrist?.mouseY;
     this.mouseX = px;
@@ -73,6 +73,7 @@ loadAndRunModel()
 // nakibg prediction
 async function prediction() {
   tf.tidy(() => {
+    renderBalls();
     let tensorOutput = movenet.predict(tf.expandDims(resizeImage(VIDEO)));
     let arrayOutput = tensorOutput.arraySync();
 
@@ -82,10 +83,10 @@ async function prediction() {
     let right_wristX = sec[0][9][1] * window.innerWidth;
     let right_wristY = sec[0][9][0] * window.innerHeight;
     predition = sec[0][9][3];
-    Lwrist = new Position(left_wristX, left_wristY,Lwrist);
-     Rwrist = new Position(right_wristX, right_wristY,Rwrist)
-    
-      renderMouseLines(Lwrist.linesArray);
+    Lwrist = new Position(left_wristX, left_wristY, Lwrist);
+    Rwrist = new Position(right_wristX, right_wristY, Rwrist)
+
+    renderMouseLines(Lwrist.linesArray);
     renderMouseLines(Rwrist.linesArray);
     for (let i = 0; i < sec[0].length; i++) {
 
@@ -389,7 +390,7 @@ function renderBalls() {
 
 
     //If Mouse is on the ball i.e Collision
-    if (distanceBetweenMouseAndBall - ballArray[i].size < 1||distanceBetweenMouseAndBall2 - ballArray[i].size < 1) {
+    if (distanceBetweenMouseAndBall - ballArray[i].size < 1 || distanceBetweenMouseAndBall2 - ballArray[i].size < 1) {
 
       //Rendering Ball Particles 
       for (let index = 0; index < 8; index++) {
@@ -435,7 +436,7 @@ function renderEnemyBombs() {
 
 
     //If Mouse is on the ball i.e Collision
-    if (distanceBetweenMouseAndEnemy - enemyBombArray[i].size < 1||distanceBetweenMouseAndEnemy2 - enemyBombArray[i].size < 1) {
+    if (distanceBetweenMouseAndEnemy - enemyBombArray[i].size < 1 || distanceBetweenMouseAndEnemy2 - enemyBombArray[i].size < 1) {
 
       if (isGamePause) {
         return
@@ -482,30 +483,32 @@ let numberOfBallsToRender = [1, 1, 1, 1, 1];
 //SetInterval to render the balls on an interval of 1 second
 const startRenderingBallsInterval = () => {
   let interval = setInterval(() => {
-    //Clear the interval if the game is end.
+    // Clear the interval if the game is end.
     if (isGameEnd) {
-      clearInterval(interval)
+      clearInterval(interval);
       return;
     }
-    //Return if the game is pause
+    // Return if the game is paused.
     if (isGamePause) {
-      return
+      return;
     }
+
+    // Generate a random number to determine the number of balls to render.
     const numberOfBalls = Math.round(Math.random() * numberOfBallsToRender.length);
+    // Determine the actual number of balls to render based on the random number.
     let indexOf = numberOfBallsToRender[numberOfBalls];
 
-    //If the index generated is greater then length of numberOfBallsToRender array, throw a bomb
-    if (numberOfBalls >= Math.floor(numberOfBallsToRender.length / 2)) {
-      enemyBombArray.push(new EnemyBomb())
+    // If the randomly generated number is greater than 0, generate an enemy bomb.
+    if (numberOfBalls > 3) {
+      enemyBombArray.push(new EnemyBomb());
     }
 
-    //Number of balls to be rendered on the canvas using for loop
+    // Number of balls to be rendered on the canvas using a for loop.
     for (let i = 0; i < indexOf; i++) {
-      ballArray.push(new Ball())
+      ballArray.push(new Ball());
     }
-
-  }, 1000)
-}
+  }, 1000);
+};
 
 //Game Status Variables
 let isGameStarted = false;
