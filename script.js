@@ -5,10 +5,27 @@ const heading = document.getElementById('heading');
 const rendring_model = document.getElementById('body')
 const VIDEO = document.getElementById('webcam');
 let model = false;
+let Lwrist;
 let dots = [];
 let left_wristX;
+let Rwrist;
 let predition;
 let left_wristY;
+class Position {
+  prevMouseX = 0;
+  prevMouseY = 0;
+  mouseX =0;
+  mouseY =0;
+  linesArray = [];
+
+  constructor(px, py,Lwrist) {
+    this.prevMouseX = Lwrist?.mouseX;
+    this.prevMouseY = Lwrist?.mouseY;
+    this.mouseX = px;
+    this.mouseY = py;
+    this.linesArray.push({ x: this.mouseX, y: this.mouseY, pMouseX: this.prevMouseX, pMouseY: this.prevMouseY });
+  }
+}
 // model data
 const MODEL_PATH = 'https://raw.githubusercontent.com/mueezejaz/model/main/model_m/model.json';
 let movenet = undefined;
@@ -58,21 +75,26 @@ async function prediction() {
   tf.tidy(() => {
     let tensorOutput = movenet.predict(tf.expandDims(resizeImage(VIDEO)));
     let arrayOutput = tensorOutput.arraySync();
-  
+
     let sec = arrayOutput[0];
-    left_wristX= sec[0][10][1] * window.innerWidth;
-    left_wristY= sec[0][10][0] * window.innerHeight;
+    left_wristX = sec[0][10][1] * window.innerWidth;
+    left_wristY = sec[0][10][0] * window.innerHeight;
+    let right_wristX = sec[0][9][1] * window.innerWidth;
+    let right_wristY = sec[0][9][0] * window.innerHeight;
     predition = sec[0][9][3];
+    Lwrist = new Position(left_wristX, left_wristY,Lwrist);
+     Rwrist = new Position(right_wristX, right_wristY,Rwrist)
     
-    
+      renderMouseLines(Lwrist.linesArray);
+    renderMouseLines(Rwrist.linesArray);
     for (let i = 0; i < sec[0].length; i++) {
 
       let x = sec[0][i][1]; // Scale x-coordinate
       let y = sec[0][i][0];
-    // Scale y-coordinate
+      // Scale y-coordinate
       createDot(x, y);
       updateDotPosition('point' + i, x, y, VIDEO.videoWidth, VIDEO.videoHeight, 192, 192);
-      position()
+      // position()
     }
     tensorOutput.dispose();
   });
@@ -83,7 +105,7 @@ async function prediction() {
 //refactring image
 function resizeImage(EXAMPLE_IMG, targetSize) {
   let imageTensor = tf.browser.fromPixels(EXAMPLE_IMG);
-   imageTensor = imageTensor.reverse(1);
+  imageTensor = imageTensor.reverse(1);
   let resizedTensor = tf.image.resizeBilinear(imageTensor, [192, 192], true).toInt();
 
   return resizedTensor;
@@ -361,10 +383,13 @@ function renderBalls() {
     ballArray[i].update();
 
     //Detection Collision of Mouse Position and Ball Position
-    let distanceBetweenMouseAndBall = Math.hypot(mouseX - ballArray[i].x, mouseY - ballArray[i].y)
+    let distanceBetweenMouseAndBall = Math.hypot(Lwrist.mouseX - ballArray[i].x, Lwrist.mouseY - ballArray[i].y)
+
+    let distanceBetweenMouseAndBall2 = Math.hypot(Rwrist.mouseX - ballArray[i].x, Rwrist.mouseY - ballArray[i].y)
+
 
     //If Mouse is on the ball i.e Collision
-    if (distanceBetweenMouseAndBall - ballArray[i].size < 1) {
+    if (distanceBetweenMouseAndBall - ballArray[i].size < 1||distanceBetweenMouseAndBall2 - ballArray[i].size < 1) {
 
       //Rendering Ball Particles 
       for (let index = 0; index < 8; index++) {
@@ -405,10 +430,12 @@ function renderEnemyBombs() {
     enemyBombArray[i].update();
 
     //Detection Collision of Mouse Position and Ball Position
-    let distanceBetweenMouseAndEnemy = Math.hypot(mouseX - enemyBombArray[i].x, mouseY - enemyBombArray[i].y)
+    let distanceBetweenMouseAndEnemy = Math.hypot(Lwrist.mouseX - enemyBombArray[i].x, Lwrist.mouseY - enemyBombArray[i].y)
+    let distanceBetweenMouseAndEnemy2 = Math.hypot(Rwrist.mouseX - enemyBombArray[i].x, Rwrist.mouseY - enemyBombArray[i].y)
+
 
     //If Mouse is on the ball i.e Collision
-    if (distanceBetweenMouseAndEnemy - enemyBombArray[i].size < 1) {
+    if (distanceBetweenMouseAndEnemy - enemyBombArray[i].size < 1||distanceBetweenMouseAndEnemy2 - enemyBombArray[i].size < 1) {
 
       if (isGamePause) {
         return
@@ -494,7 +521,7 @@ function animate() {
   renderBalls();
   renderBallParticles();
   renderEnemyBombs();
-  renderMouseLines();
+
   //Cancel animation when the game is end.
   if (isGameEnd) {
     cancelAnimationFrame(animationId);
@@ -513,24 +540,26 @@ let isMouseClicked = false;
 
 let linesArray = [];
 
-function renderMouseLines() {
-  for (let i = 0; i < linesArray.length; i++) {
+function renderMouseLines(a) {
+  console.log(a)
+  console.log(a.length)
+  for (let i = 0; i < a.length; i++) {
     context.strokeStyle = 'white';
     context.beginPath();
 
-    context.moveTo(linesArray[i].x, linesArray[i].y);
-    context.lineTo(linesArray[i].pMouseX, linesArray[i].pMouseY);
+    context.moveTo(a[i].x, a[i].y);
+    context.lineTo(a[i].pMouseX, a[i].pMouseY);
     context.stroke();
     context.lineWidth = 4;
     context.closePath();
   }
   //If the length of this array is greater then 4 splice the first object of this array using shift();
-  if (linesArray.length > 4) {
+  if (a.length > 4) {
     if (!isSwordSoundPlaying) {
       playSwordSound();
     }
-    linesArray.shift();
-    linesArray.shift();
+    a.shift();
+    a.shift();
   }
 }
 
@@ -539,15 +568,15 @@ function renderMouseLines() {
 
 
 //When mouse is moving
-let position=() => {
-  
-    prevMouseX = mouseX;
-    prevMouseY = mouseY;
-    mouseX = left_wristX;
-    mouseY = left_wristY;
-    linesArray.push({ x: mouseX, y: mouseY, pMouseX: prevMouseX, pMouseY: prevMouseY })
-  
-  renderMouseLines()
+let position = () => {
+
+  prevMouseX = mouseX;
+  prevMouseY = mouseY;
+  mouseX = left_wristX;
+  mouseY = left_wristY;
+  // linesArray.push({ x: mouseX, y: mouseY, pMouseX: prevMouseX, pMouseY: prevMouseY })
+  // console.log(linesArray)
+
 }
 
 //When the mouse button is released
